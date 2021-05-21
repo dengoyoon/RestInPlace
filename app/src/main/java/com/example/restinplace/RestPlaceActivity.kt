@@ -24,7 +24,11 @@ class RestPlaceActivity : AppCompatActivity() {
         var baseUrl = "http://data.ex.co.kr/openapi/restinfo/"
         var key = "0781634483"
         var type = "json"
+        var numOfRows = "6"
     }
+
+    private lateinit var adapter: RestPlaceAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,17 +43,22 @@ class RestPlaceActivity : AppCompatActivity() {
                 .build()
 
         val service = retrofit.create(RipInterface2::class.java)
-//
-        var routeNm = "" + intent.getStringExtra("routeNm")
-//
-        binding.restPlaceSelect.text = routeNm
+
+        var routeName = "" + intent.getStringExtra("routeNm")
+
+        binding.restPlaceSelect.text = routeName
+
+        var pageNo = 1
 
 
 
-        val call = service.getRipData2(RestPlaceActivity.key, RestPlaceActivity.type, routeNm)
+
+
+
+        val call = service.getRipData2(RestPlaceActivity.key, RestPlaceActivity.type, routeName, RestPlaceActivity.numOfRows, pageNo.toString())
         call.enqueue(object : Callback<RipResponse2> {
             override fun onFailure(call: Call<RipResponse2>, t: Throwable) {
-                Log.d("MainActivity", "******************************result : " + t.message)
+                Log.d("MainActivity", "result : " + t.message)
             }
 
             override fun onResponse(call: Call<RipResponse2>, response: Response<RipResponse2>) {
@@ -63,12 +72,18 @@ class RestPlaceActivity : AppCompatActivity() {
 
         })
 
+
+
+
+
+
+
         for(i in 1..10){
             restplaceDataList.add(RPlace("행복휴게소","행복시 행복동 행복구 42번지"))
         }
 
-        val adap = RestPlaceAdapter(this, restplaceDataList)
-        binding.restPlaceList.adapter = adap
+        adapter = RestPlaceAdapter(this, restplaceDataList)
+        binding.restPlaceList.adapter = adapter
     }
 
 }
@@ -79,6 +94,8 @@ interface RipInterface2 {
             @Query("key") key: String,
             @Query("type") type: String,
             @Query("routeNm") routeNm: String?,
+            @Query("numOfRows") numOfRows: String?,
+            @Query("pageNo") pageNo: String?,
 //            @Query("stdRestCd")std_rest_cd:String
     ): Call<RipResponse2> // DATA CLASS
 

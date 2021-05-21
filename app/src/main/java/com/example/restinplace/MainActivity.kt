@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
                 val call = service.getRipData(key, type, i.toString(), numOfRows)
                 call.enqueue(object : Callback<RipResponse> {
                     override fun onFailure(call: Call<RipResponse>, t: Throwable) {
-                        Log.d("MainActivity", "******************************result : " + t.message)
+                        Log.d("MainActivity", "result : " + t.message)
                         Log.d("MainActivity", "****************************************************FAIL")
                     }
 
